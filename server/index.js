@@ -156,8 +156,8 @@ const port = 5678;
       mainXJs = mainXJs.replace(/https:\/\/api\.getfiddler\.com/g, `http://127.0.0.1:${port}/api.getfiddler.com`)
       mainXJs = mainXJs.replace(/https:\/\/identity\.getfiddler\.com/g, `http://127.0.0.1:${port}/identity.getfiddler.com`)
       // "https://","api",".get","fiddler",".com"
-      mainXJs = mainXJs.replace(new RegExp(`"https://","api",".get","fiddler",".com"`, 'g'), `"http://","api",".get","fiddler",".com:${port}"`)
-      mainXJs = mainXJs.replace(new RegExp(`"https://","identity",".get","fiddler",".com"`, 'g'), `"http://","identity",".get","fiddler",".com:${port}"`)
+      mainXJs = mainXJs.replace(new RegExp(`"https://","api",".get","fiddler",".com"`, 'g'), `"http://127.0.0.1:${port}/","api",".get","fiddler",".com"`)
+      mainXJs = mainXJs.replace(new RegExp(`"https://","identity",".get","fiddler",".com"`, 'g'), `"http://127.0.0.1:${port}/","identity",".get","fiddler",".com"`)
 
       fs.writeFileSync(mainXJsPath, mainXJs)
     }
@@ -171,6 +171,28 @@ const port = 5678;
         from: '162a28b10400',
         to: '172a28b10400',
       },
+      {
+        // api.getfiddler.be
+        from: '6100700069002e0067006500740066006900640064006c00650072002e0062006500',
+        //    1   2   7   .   0   .   0   .   1
+        to: '3100320037002e0030002e0030002e00310000000000000000000000000000000000',
+      },
+      {
+        // 域名长度修正
+        from: 'FF11001F118D3700000125',
+        to: 'FF11001F098D3700000125',
+      },
+      {
+        // identity.getfiddler.be
+        from: '6900640065006e0074006900740079002e0067006500740066006900640064006c00650072002e0062006500',
+        //    1   2   7   .   0   .   0   .   1
+        to: '3100320037002e0030002e0030002e0031000000000000000000000000000000000000000000000000000000',
+      },
+      {
+        // 域名长度修正
+        from: '0011001F168D3700000125',
+        to: '0011001F098D3700000125',
+      }
     ]
     // patch resources\app.asar.unpacked\out\WebServer\FiddlerBackendSDK.dll
     const p = path.resolve(__dirname, '../../app/out/WebServer/FiddlerBackendSDK.dll')
@@ -195,9 +217,10 @@ const port = 5678;
       constructor(u, base) {
         super(u, base)
         console.info('new URL -> ', u)
-        if (u.includes('http://') && u.includes('getfiddler') && u.includes(':5678') && u.endsWith('.com:5678')) {
+        if (u.includes('http://') && u.includes('getfiddler') && u.includes(':5678') && u.endsWith('.com')) {
           this.protocol = 'https:'
           this.port = ''
+          this.hostname = 'api.getfiddler.com'
         }
       }
     }

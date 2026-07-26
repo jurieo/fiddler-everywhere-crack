@@ -55,14 +55,7 @@
 4. - If you patch Fiddler Everywhere 5.16.0 or earlier, rename `yui-fiddler-win32-x86_64-vx.x.x.dll` to `libfiddler.dll`
    - If you patch Fiddler Everywhere 5.17.0 or later, rename `yui-fiddler-win32-x86_64-vx.x.x.dll` to `fiddler.dll`
 5. Move `fiddler.dll` (or `libfiddler.dll` in `5.16.0` and erlier) to the *root folder* of Fiddler Everywhere
-6. Set hosts
-   1. Open `C:\Windows\System32\drivers\etc\hosts` with administrator privileges.
-   2. Add the following lines to the end of the file:
-      ```
-      127.0.0.1 api.getfiddler.com
-      127.0.0.1 identity.getfiddler.com
-      ```
-7. Modify file `app.asar` as instructed below.
+6. Modify file `app.asar` as instructed below.
 
 ## Linux
 
@@ -70,13 +63,6 @@
 2. Go to https://github.com/project-yui/Yui-patch/releases
 3. Download `yui-libfiddler-linux-x86_64-vx.x.x.so` & rename it to `libfiddler.so`
 4. Move `libfiddler.so` to the root path of fiddler.
-6. Set hosts
-   1. Open `/etc/hosts` with administrator privileges.
-   2. Add the following lines to the end of the file:
-      ```
-      127.0.0.1 api.getfiddler.com
-      127.0.0.1 identity.getfiddler.com
-      ```
 5. Modify file `main.js` as instructed below.
 
 > [!NOTE]
@@ -90,14 +76,7 @@
 4. - If you patch Fiddler Everywhere 5.16.0 or earlier, rename `yui-fiddler-mac-[arch]-vx.x.x.dylib` to `libfiddler.dylib`
    - If you patch Fiddler Everywhere 5.17.0 or later, rename `yui-fiddler-mac-[arch]-vx.x.x.dylib` to `fiddler.dylib`
 5. Move `fiddler.dylib` (or `libfiddler.dylib` in `5.16.0` and erlier) to `Contents/Frameworks`
-6. Set hosts
-   1. Open `/etc/hosts` with administrator privileges.
-   2. Add the following lines to the end of the file:
-      ```
-      127.0.0.1 api.getfiddler.com
-      127.0.0.1 identity.getfiddler.com
-      ```
-7. Modify file `main.js` as instructed below.
+6. Modify file `main.js` as instructed below.
 
 > [!NOTE]
 > You may need to recompile `fiddler.dylib` (or `libfiddler.dylib` in `5.16.0` and erlier) by yourself.
