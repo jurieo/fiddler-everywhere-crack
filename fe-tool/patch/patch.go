@@ -4,13 +4,22 @@ import (
 	"io"
 	"log"
 	"os"
+
+	"github.com/dcboy/go-asar/asar"
 )
 
 func Apply(version string) {
 	log.Println("Apply patch.")
+	os.WriteFile("FiddlerEverywhere/resources/app.asar.unpacked/NOTICES-reporter.txt", []byte(""), 0644)
+	err := asar.ExtractAll("FiddlerEverywhere/resources/app.asar", "FiddlerEverywhere/resources/app")
+	if err != nil {
+		log.Fatalln("Extract app.asar error:", err)
+	}
+
+	os.RemoveAll("FiddlerEverywhere/resources/app.asar")
 	os.RemoveAll("FiddlerEverywhere/resources/app/out/file")
 	// 2. Copy server/file -> fe/resources/app/out/file
-	err := os.Rename("fiddler-everywhere-enhance-main/server/file", "FiddlerEverywhere/resources/app/out/file")
+	err = os.Rename("fiddler-everywhere-enhance-8.x/server/file", "FiddlerEverywhere/resources/app/out/file")
 	if err != nil {
 		log.Fatalln("Move server file error:", err)
 	}
@@ -20,7 +29,7 @@ func Apply(version string) {
 		log.Fatalln("Rename main.js to main.original.js error:", err)
 	}
 	// 4. Prepend server/index.js to fe/resources/app/out/main.js
-	err = os.Rename("fiddler-everywhere-enhance-main/server/index.js", "FiddlerEverywhere/resources/app/out/main.js")
+	err = os.Rename("fiddler-everywhere-enhance-8.x/server/index.js", "FiddlerEverywhere/resources/app/out/main.js")
 	if err != nil {
 		log.Fatalln("Move server/index.js to main.js error:", err)
 	}

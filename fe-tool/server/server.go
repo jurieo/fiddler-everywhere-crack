@@ -23,7 +23,7 @@ func Download() {
 
 	writer := bufio.NewWriter(file)
 	client := http.Client{}
-	resp, err := client.Get("https://github.com/msojocs/fiddler-everywhere-enhance/archive/refs/heads/main.zip")
+	resp, err := client.Get("https://github.com/msojocs/fiddler-everywhere-enhance/archive/refs/heads/v8.x.zip")
 	if err != nil {
 		file.Close()
 		log.Fatalln("Download server error:" + err.Error())
