@@ -176,6 +176,7 @@ const port = 5678;
   // version 8.x
   if (Number(pkg.version.split('.')[0]) >= 8){
     const cfgList = [
+      // 签名公钥白名单检查
       {
         from: '162a28b10400',
         to: '172a28b10400',
