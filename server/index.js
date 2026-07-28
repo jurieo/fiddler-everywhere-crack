@@ -8,6 +8,38 @@ const port = 5678;
 
   const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8'))
 
+  const mainXHandle = {
+    replace: () => {
+      // 修改mian-xxx.js文件
+      console.info('Modify main-XXXXXXX.js (Or main.XXXXXXXXXXXXX.js in old versions)')
+      const index = fs.readFileSync(path.resolve(__dirname, './WebServer/ClientApp/dist/index.html')).toString()
+      const match = index.match(/main.*?\.js/)
+      const mainXJsPath = path.resolve(__dirname, `./WebServer/ClientApp/dist/${match}`)
+      let mainXJs = fs.readFileSync(mainXJsPath).toString()
+      mainXJs = mainXJs.replace(/https:\/\/api\.getfiddler\.com/g, `http://127.0.0.1:${port}/api.getfiddler.com`)
+      mainXJs = mainXJs.replace(/https:\/\/identity\.getfiddler\.com/g, `http://127.0.0.1:${port}/identity.getfiddler.com`)
+      // "https://","api",".get","fiddler",".com"
+      mainXJs = mainXJs.replace(new RegExp(`"https://","api",".get","fiddler",".com"`, 'g'), `"http://127.0.0.1:${port}/","api",".get","fiddler",".com"`)
+      mainXJs = mainXJs.replace(new RegExp(`"https://","identity",".get","fiddler",".com"`, 'g'), `"http://127.0.0.1:${port}/","identity",".get","fiddler",".com"`)
+
+      fs.writeFileSync(mainXJsPath, mainXJs)
+    },
+    reset: () => {
+      // 还原mian-xxx.js文件
+      console.info('Recover main-XXXXXXX.js (Or main.XXXXXXXXXXXXX.js in old versions)')
+      const index = fs.readFileSync(path.resolve(__dirname, './WebServer/ClientApp/dist/index.html')).toString()
+      const match = index.match(/main.*?\.js/)
+      console.info('Match result:', match)
+      const mainXJsPath = path.resolve(__dirname, `./WebServer/ClientApp/dist/${match}`)
+      let mainXJs = fs.readFileSync(mainXJsPath).toString()
+      const exp = new RegExp(`http://127\\.0\\.0\\.1:\\d+/`, 'g')
+      mainXJs = mainXJs.replace(exp, 'https://')
+      mainXJs = mainXJs.replace(new RegExp(`"http://","api"`, 'g'), '"https://","api"')
+      mainXJs = mainXJs.replace(new RegExp(`"http://","identity"`, 'g'), '"https://","identity"')
+      mainXJs = mainXJs.replace(new RegExp(`".com:\\d+"]`, 'g'), '".com"]')
+      fs.writeFileSync(mainXJsPath, mainXJs)
+    }
+  }
   const originalSpwan = sp.spawn
   app.on("certificate-error", (event, _webContents, url, _error, _certificate, callback) => {
     if (url.includes("getfiddler.com") || url.startsWith("https://localhost:"+port)) {
@@ -27,19 +59,7 @@ const port = 5678;
       const data = JSON.parse(fs.readFileSync(pkg).toString())
       data.main = "out/main.original.js"
       fs.writeFileSync(pkg, JSON.stringify(data, null, 4))
-      // 还原mian-xxx.js文件
-      console.info('Recover main-XXXXXXX.js (Or main.XXXXXXXXXXXXX.js in old versions)')
-      const index = fs.readFileSync(path.resolve(__dirname, './WebServer/ClientApp/dist/index.html')).toString()
-      const match = index.match(/main.*?\.js/)
-      console.info('Match result:', match)
-      const mainXJsPath = path.resolve(__dirname, `./WebServer/ClientApp/dist/${match}`)
-      let mainXJs = fs.readFileSync(mainXJsPath).toString()
-      const exp = new RegExp(`http://127\\.0\\.0\\.1:\\d+/`, 'g')
-      mainXJs = mainXJs.replace(exp, 'https://')
-      mainXJs = mainXJs.replace(new RegExp(`"http://","api"`, 'g'), '"https://","api"')
-      mainXJs = mainXJs.replace(new RegExp(`"http://","identity"`, 'g'), '"https://","identity"')
-      mainXJs = mainXJs.replace(new RegExp(`".com:\\d+"]`, 'g'), '".com"]')
-      fs.writeFileSync(mainXJsPath, mainXJs)
+      mainXHandle.reset()
     }
     /**@type {dV.ChildProcessWithoutNullStreams} */
     const result = originalSpwan.apply(this, args)
@@ -125,6 +145,7 @@ const port = 5678;
       }
     });
     this.webContents.on("did-finish-load", (event, input) => {
+      mainXHandle.reset()
       this.webContents.executeJavaScript(`{
         const originalSome = Array.prototype.some
         Array.prototype.some = function(...args) {
@@ -147,19 +168,7 @@ const port = 5678;
     });
     if (args[0].includes('index.html'))
     {
-      // 修改mian-xxx.js文件
-      console.info('Modify main-XXXXXXX.js (Or main.XXXXXXXXXXXXX.js in old versions)')
-      const index = fs.readFileSync(path.resolve(__dirname, './WebServer/ClientApp/dist/index.html')).toString()
-      const match = index.match(/main.*?\.js/)
-      const mainXJsPath = path.resolve(__dirname, `./WebServer/ClientApp/dist/${match}`)
-      let mainXJs = fs.readFileSync(mainXJsPath).toString()
-      mainXJs = mainXJs.replace(/https:\/\/api\.getfiddler\.com/g, `http://127.0.0.1:${port}/api.getfiddler.com`)
-      mainXJs = mainXJs.replace(/https:\/\/identity\.getfiddler\.com/g, `http://127.0.0.1:${port}/identity.getfiddler.com`)
-      // "https://","api",".get","fiddler",".com"
-      mainXJs = mainXJs.replace(new RegExp(`"https://","api",".get","fiddler",".com"`, 'g'), `"http://127.0.0.1:${port}/","api",".get","fiddler",".com"`)
-      mainXJs = mainXJs.replace(new RegExp(`"https://","identity",".get","fiddler",".com"`, 'g'), `"http://127.0.0.1:${port}/","identity",".get","fiddler",".com"`)
-
-      fs.writeFileSync(mainXJsPath, mainXJs)
+      mainXHandle.replace()
     }
     return originloadURL.apply(this, args)
   };

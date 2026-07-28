@@ -35,6 +35,8 @@
   >  - If you're using Fiddler Everywhere 5.16.0 or earlier, look for `libfiddler.dll` instead of `fiddler.dll`.
   >  - In version 5.17.0 and later, it was renamed to `fiddler.dll`.
 
+  > [!IMPORTANT]
+  >  - If you're using Fiddler Everywhere 7.x or earlier, fllow [main](https://github.com/msojocs/fiddler-everywhere-enhance/tree/main) branch.
 ---
 
 > [!TIP]
