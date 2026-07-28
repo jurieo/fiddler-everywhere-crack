@@ -35,8 +35,6 @@
   >  - If you're using Fiddler Everywhere 5.16.0 or earlier, look for `libfiddler.dll` instead of `fiddler.dll`.
   >  - In version 5.17.0 and later, it was renamed to `fiddler.dll`.
 
-  > [!IMPORTANT]
-  >  - If you're using Fiddler Everywhere 7.x or earlier, fllow [main](https://github.com/msojocs/fiddler-everywhere-enhance/tree/main) branch.
 ---
 
 > [!TIP]
@@ -57,7 +55,10 @@
 4. - If you patch Fiddler Everywhere 5.16.0 or earlier, rename `yui-fiddler-win32-x86_64-vx.x.x.dll` to `libfiddler.dll`
    - If you patch Fiddler Everywhere 5.17.0 or later, rename `yui-fiddler-win32-x86_64-vx.x.x.dll` to `fiddler.dll`
 5. Move `fiddler.dll` (or `libfiddler.dll` in `5.16.0` and erlier) to the *root folder* of Fiddler Everywhere
-6. Modify file `app.asar` as instructed below.
+6. Extract file `app.asar` as instructed below.
+7. Copy `resources\app\out\main.js` to `resources\app\out\main.original.js`
+8. Modify file `main.js` as instructed below.
+9. Copy `server/file` -> `Fiddler/resources/app/out/file`
 
 ## Linux
 
@@ -65,7 +66,10 @@
 2. Go to https://github.com/project-yui/Yui-patch/releases
 3. Download `yui-libfiddler-linux-x86_64-vx.x.x.so` & rename it to `libfiddler.so`
 4. Move `libfiddler.so` to the root path of fiddler.
-5. Modify file `main.js` as instructed below.
+5. Extract file `app.asar` as instructed below.
+6. Copy `resources/app/out/main.js` to `resources/app/out/main.original.js`
+7. Modify file `main.js` as instructed below.
+8. Copy `server/file` -> `Fiddler/resources/app/out/file`
 
 > [!NOTE]
 > You may need to recompile `libfiddler.so` by yourself.
@@ -78,7 +82,10 @@
 4. - If you patch Fiddler Everywhere 5.16.0 or earlier, rename `yui-fiddler-mac-[arch]-vx.x.x.dylib` to `libfiddler.dylib`
    - If you patch Fiddler Everywhere 5.17.0 or later, rename `yui-fiddler-mac-[arch]-vx.x.x.dylib` to `fiddler.dylib`
 5. Move `fiddler.dylib` (or `libfiddler.dylib` in `5.16.0` and erlier) to `Contents/Frameworks`
-6. Modify file `main.js` as instructed below.
+6. Extract file `app.asar` as instructed below.
+7. Copy `Resources/app/out/main.js` to `Resources/app/out/main.original.js`
+8. Modify file `main.js` as instructed below.
+9. Copy `server/file` -> `Contents/Resources/app/out/file`
 
 > [!NOTE]
 > You may need to recompile `fiddler.dylib` (or `libfiddler.dylib` in `5.16.0` and erlier) by yourself.
@@ -87,14 +94,16 @@
 
   ---
 
-# How to Modify `app.asar`
+# How to Extract `app.asar`
 
 1. Open `resources/app.asar.unpacked` folder, then create empty file `NOTICES-reporter.txt`.
 2. Open `resources` folder, then extract `app.asar` to `app` folder by using [asar](https://www.npmjs.com/package/asar), command `asar e app.asar app`.
 3. Delete `app.asar` file.
-4. Copy `resources/app/out/main.js` to `resources/app/out/main.original.js`
-5. Open & copy content of `{github-repo}/server/index.js` & append to `resources/app/out/main.js` at the begining.
-6. Copy `{github-repo}/server/file` -> `Fiddler/resources/app/out/file`
+
+# How to Modify `main.js`
+
+1. Open `resources/app/out/main.js` in a text editor
+2. Open & copy content of `{github-repo}/server/index.js` & append to `resources/app/out/main.js` at the begining.
 
 # Change **First Name**, **Last Name** & **Email** (Additional)
 If you want to change default `first & last names` and `email`, you can edit, `resources/app/out/file/identity.getfiddler.com/oauth/token.json`. 

@@ -10,16 +10,20 @@ import (
 
 func Apply(version string) {
 	log.Println("Apply patch.")
-	os.WriteFile("FiddlerEverywhere/resources/app.asar.unpacked/NOTICES-reporter.txt", []byte(""), 0644)
-	err := asar.ExtractAll("FiddlerEverywhere/resources/app.asar", "FiddlerEverywhere/resources/app")
-	if err != nil {
-		log.Fatalln("Extract app.asar error:", err)
-	}
 
-	os.RemoveAll("FiddlerEverywhere/resources/app.asar")
+	// if file exists
+	if _, err := os.Stat("FiddlerEverywhere/resources/app.asar"); err == nil {
+		os.WriteFile("FiddlerEverywhere/resources/app.asar.unpacked/NOTICES-reporter.txt", []byte(""), 0644)
+		err := asar.ExtractAll("FiddlerEverywhere/resources/app.asar", "FiddlerEverywhere/resources/app")
+		if err != nil {
+			log.Fatalln("Extract app.asar error:", err)
+		}
+
+		os.RemoveAll("FiddlerEverywhere/resources/app.asar")
+	}
 	os.RemoveAll("FiddlerEverywhere/resources/app/out/file")
 	// 2. Copy server/file -> fe/resources/app/out/file
-	err = os.Rename("fiddler-everywhere-enhance-8.x/server/file", "FiddlerEverywhere/resources/app/out/file")
+	err := os.Rename("fiddler-everywhere-enhance-8.x/server/file", "FiddlerEverywhere/resources/app/out/file")
 	if err != nil {
 		log.Fatalln("Move server file error:", err)
 	}
