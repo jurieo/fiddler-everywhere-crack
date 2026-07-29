@@ -93,5 +93,6 @@ func Download(version string) string {
 }
 
 func Extract(path string) {
+	log.Println("Extract FE start...")
 	common.ExtractArchive(path, TargetDir)
 }

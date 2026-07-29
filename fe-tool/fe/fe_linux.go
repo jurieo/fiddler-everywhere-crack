@@ -91,6 +91,7 @@ func Download(version string) string {
 }
 
 func Extract(path string) {
+	log.Println("Extract FE start...")
 	cmd := exec.Command(path, "--appimage-extract")
 	err := cmd.Run()
 	if err != nil {
