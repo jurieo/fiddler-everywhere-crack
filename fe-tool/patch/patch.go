@@ -55,6 +55,8 @@ func Apply(version string) {
 		log.Fatalln("Append main.js error:", err)
 	}
 
+	os.Chmod("FiddlerEverywhere/resources/app/out/WebServer/Fiddler.WebUi", 0755)
+
 	replaceFiddler(version)
 	log.Println("Apply end.")
 }

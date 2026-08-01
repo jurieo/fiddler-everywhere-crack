@@ -51,7 +51,7 @@ func Download(version string) string {
 		if err != nil {
 			log.Fatalln("Chmod "+saveFilePath+" error", err)
 		}
-		return ""
+		return saveFilePath
 	}
 	file, err := os.Create(saveFilePath + ".tmp")
 	if err != nil {
@@ -91,7 +91,7 @@ func Download(version string) string {
 }
 
 func Extract(path string) {
-	log.Println("Extract FE start...")
+	log.Println("Extract FE start...", path)
 	cmd := exec.Command(path, "--appimage-extract")
 	err := cmd.Run()
 	if err != nil {
