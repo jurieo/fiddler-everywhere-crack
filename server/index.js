@@ -19,8 +19,8 @@ const port = 5678;
       mainXJs = mainXJs.replace(/https:\/\/api\.getfiddler\.com/g, `http://127.0.0.1:${port}/api.getfiddler.com`)
       mainXJs = mainXJs.replace(/https:\/\/identity\.getfiddler\.com/g, `http://127.0.0.1:${port}/identity.getfiddler.com`)
       // "https://","api",".get","fiddler",".com"
-      mainXJs = mainXJs.replace(new RegExp(`"https://","api",".get","fiddler",".com"`, 'g'), `"http://","api",".get","fiddler",".com"`)
-      mainXJs = mainXJs.replace(new RegExp(`"https://","identity",".get","fiddler",".com"`, 'g'), `"http://","identity",".get","fiddler",".com"`)
+      mainXJs = mainXJs.replace(new RegExp(`"https://","api",".get","fiddler",".com"`, 'g'), `"http://","api",".get","fiddler",".be:${port}"`)
+      mainXJs = mainXJs.replace(new RegExp(`"https://","identity",".get","fiddler",".com"`, 'g'), `"http://","identity",".get","fiddler",".be:${port}"`)
 
       fs.writeFileSync(mainXJsPath, mainXJs)
     },
@@ -32,22 +32,14 @@ const port = 5678;
       console.info('Match result:', match)
       const mainXJsPath = path.resolve(__dirname, `./WebServer/ClientApp/dist/${match}`)
       let mainXJs = fs.readFileSync(mainXJsPath).toString()
-      const exp = new RegExp(`http://127\\.0\\.0\\.1:\\d+/`, 'g')
-      mainXJs = mainXJs.replace(exp, 'https://')
+      mainXJs = mainXJs.replace(new RegExp(`http://127\\.0\\.0\\.1:\\d+/`, 'g'), 'https://')
       mainXJs = mainXJs.replace(new RegExp(`"http://","api"`, 'g'), '"https://","api"')
       mainXJs = mainXJs.replace(new RegExp(`"http://","identity"`, 'g'), '"https://","identity"')
+      mainXJs = mainXJs.replace(new RegExp(`",".get","fiddler",".be:\\d+"`, 'g'), `",".get","fiddler",".com"`)
       fs.writeFileSync(mainXJsPath, mainXJs)
     }
   }
   const originalSpwan = sp.spawn
-  app.on("certificate-error", (event, _webContents, url, _error, _certificate, callback) => {
-    if (url.includes("getfiddler.com") || url.startsWith("https://localhost:"+port)) {
-      event.preventDefault();
-      callback(true);
-    } else {
-      callback(false);
-    }
-  });
   sp.spawn = function(...args) {
     console.info('Call spwan:', args[0])
     if (args[0].includes('Fiddler.WebUi'))
@@ -55,7 +47,6 @@ const port = 5678;
       const options = args[2]
       console.info('options:', options)
       options.env = options.env || {}
-      options.env.http_proxy=`http://127.0.0.1:${port}`
       // 启动后端服务前指向原始的main.js文件
       const pkg = path.resolve(__dirname, '../../app/package.json')
       console.info('Modify package.json', pkg)
@@ -181,8 +172,8 @@ const port = 5678;
     const cfgList = [
       // 签名公钥白名单检查
       {
-        from: '162a28b10400',
-        to: '172a28b10400',
+        from: '162a28b104000A',
+        to: '172a28b104000A',
       },
     ]
     // patch resources\app.asar.unpacked\out\WebServer\FiddlerBackendSDK.dll
@@ -208,7 +199,7 @@ const port = 5678;
       constructor(u, base) {
         super(u, base)
         console.info('new URL -> ', u)
-        if (u.includes('http://') && u.includes('getfiddler') && u.endsWith('.com')) {
+        if (u.includes('http://') && u.includes('getfiddler') && (u.endsWith('.com') || u.endsWith(`:${port}`))) {
           this.protocol = 'https:'
           this.port = ''
           this.hostname = 'api.getfiddler.com'
@@ -242,8 +233,11 @@ const port = 5678;
   http.createServer( async (req, res) => {
     const fullPath = req.url
     const url = new URL(fullPath, `http://127.0.0.1:${port}`)
-    const host = req.headers.host.split(':')[0]
+    let host = req.headers.host.split(':')[0]
     console.log(req.method, host, url.pathname)
+    if (host.endsWith('.be')) {
+      host = host.replace('.be', '.com')
+    }
     if (host.includes('getfiddler.com')) {
       url.pathname = `/${host}${url.pathname}`
     }

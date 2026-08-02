@@ -59,6 +59,13 @@
 7. Copy `resources\app\out\main.js` to `resources\app\out\main.original.js`
 8. Modify file `main.js` as instructed below.
 9. Copy `server/file` -> `Fiddler/resources/app/out/file`
+10. Setting hosts:
+    - Open `C:\Windows\System32\drivers\etc\hosts` in a text editor with administrator privileges.
+    - Add the following lines to the end of the file:
+      ```
+      127.0.0.1 api.getfiddler.be
+      127.0.0.1 identity.getfiddler.be
+      ```
 
 ## Linux
 
@@ -70,6 +77,13 @@
 6. Copy `resources/app/out/main.js` to `resources/app/out/main.original.js`
 7. Modify file `main.js` as instructed below.
 8. Copy `server/file` -> `Fiddler/resources/app/out/file`
+9. Setting hosts:
+    - Open `/etc/hosts` in a text editor with root privileges.
+    - Add the following lines to the end of the file:
+      ```
+      127.0.0.1 api.getfiddler.be
+      127.0.0.1 identity.getfiddler.be
+      ```
 
 > [!NOTE]
 > You may need to recompile `libfiddler.so` by yourself.
@@ -86,6 +100,13 @@
 7. Copy `Resources/app/out/main.js` to `Resources/app/out/main.original.js`
 8. Modify file `main.js` as instructed below.
 9. Copy `server/file` -> `Contents/Resources/app/out/file`
+10. Setting hosts:
+    - Open `/etc/hosts` in a text editor with root privileges.
+    - Add the following lines to the end of the file:
+      ```
+      127.0.0.1 api.getfiddler.be
+      127.0.0.1 identity.getfiddler.be
+      ```
 
 > [!NOTE]
 > You may need to recompile `fiddler.dylib` (or `libfiddler.dylib` in `5.16.0` and erlier) by yourself.
